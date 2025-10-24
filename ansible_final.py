@@ -12,7 +12,7 @@ def showrun(router_ip):
         return "Error: Ansible"
 
 def motd(router_ip, motd_message, student_id):
-    command = ['ansible-playbook', 'playbook-2025.yaml', '-i', 'hosts.ini', '--extra-vars', f'router_ip={router_ip} motd_message={motd_message} student_id={student_id}']
+    command = ["ansible-playbook", "playbook-2025.yaml", "-i", "hosts.ini", "--extra-vars", f"router_ip={router_ip} motd_message='{motd_message}' student_id={student_id}"]
     result = subprocess.run(command, capture_output=True, text=True)
 
     if result.returncode == 0:

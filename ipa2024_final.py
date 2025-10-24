@@ -114,7 +114,6 @@ while True:
 
             if command == "motd":
                 if message_len > 3:
-                    message = "/66070108 10.0.0.15 motd i love roblox"
                     parts_message = message.split()
 
                     motd_message = " ".join(parts_message[3:])

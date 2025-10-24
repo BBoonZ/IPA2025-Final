@@ -49,15 +49,16 @@ def gigabit_status():
 
 def motd():
     with ConnectHandler(**device_params) as ssh:
-        output = ssh.send_command("show running-config")
-        # print(output)
+        output = ssh.send_command("show running-config | include banner motd")
+        print(output)
 
-        match = re.search(r'banner motd \^(.*?)\^C', output, re.DOTALL)
-        print(match)
-        if match:
-            motd_text = match.group(1).strip()
+        start = output.find("^C")
+        end = output.find("^C", start + 2)
+
+        if start != -1 and end != -1:
+            motd_text = output[start + 2:end]
             print(f"MOTD on {router_ip}: {motd_text}")
-            return motd_text[1::]
+            return motd_text
         else:
             print(f"No MOTD configured on {router_ip}")
             return "Error: No MOTD Configured"
