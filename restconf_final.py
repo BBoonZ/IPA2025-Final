@@ -26,34 +26,45 @@ def set_router_ip(ip):
     api_url = f"https://{router_ip}/restconf/data"
 
 def create():
-    yangConfig = {
-        "ietf-interfaces:interface": {
-            "name": "Loopback66070108",
-            "description": "Created Loopback66070108",
-            "type": "iana-if-type:softwareLoopback",
-            "enabled": True,
-            "ietf-ip:ipv4": {
-                "address": [
-                    {"ip": "172.10.8.1", "netmask": "255.255.255.0"}
-                ]
-            }
-        }
-    }
-
-    resp = requests.put(
+    resp_get = requests.get(
         f"{api_url}/ietf-interfaces:interfaces/interface=Loopback66070108",
-        data=json.dumps(yangConfig),
         auth=basicauth,
         headers=headers,
         verify=False
     )
 
-    if (resp.status_code >= 200 and resp.status_code <= 299):
-        print("STATUS OK: {}".format(resp.status_code))
-        return "Interface loopback 66070108 is created successfully using Restconf"
-    else:
-        print('Error. Status Code: {}'.format(resp.status_code))
+    if resp_get.status_code == 200:
+        print("Interface already exists.")
         return "Cannot create: Interface loopback 66070108"
+    elif resp_get.status_code == 404:
+        yangConfig = {
+            "ietf-interfaces:interface": {
+                "name": "Loopback66070108",
+                "description": "Created Loopback66070108",
+                "type": "iana-if-type:softwareLoopback",
+                "enabled": True,
+                "ietf-ip:ipv4": {
+                    "address": [
+                        {"ip": "172.10.8.1", "netmask": "255.255.255.0"}
+                    ]
+                }
+            }
+        }
+
+        resp = requests.put(
+            f"{api_url}/ietf-interfaces:interfaces/interface=Loopback66070108",
+            data=json.dumps(yangConfig),
+            auth=basicauth,
+            headers=headers,
+            verify=False
+        )
+
+        if (resp.status_code >= 200 and resp.status_code <= 299):
+            print("STATUS OK: {}".format(resp.status_code))
+            return "Interface loopback 66070108 is created successfully using Restconf"
+        else:
+            print('Error. Status Code: {}'.format(resp.status_code))
+            return "Cannot create: Interface loopback 66070108"
 
 
 def delete():

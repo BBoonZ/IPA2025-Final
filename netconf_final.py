@@ -32,6 +32,25 @@ def create(ip):
     if m is None:
         return "Cannot create: NETCONF session failed"
 
+    # ตรวจสอบ interface ก่อน
+    filter_check = """
+    <filter>
+      <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+        <interface>
+          <name>Loopback66070108</name>
+        </interface>
+      </interfaces>
+    </filter>
+    """
+    try:
+        netconf_check = m.get_config(source='running', filter=filter_check)
+        if '<interface>' in netconf_check.xml:
+            print("Interface already exists.")
+            return "Cannot create: Interface loopback 66070108"
+    except Exception as e:
+        print("Error!", e)
+
+    # ถ้าไม่มีค่อยสร้าง
     netconf_config = """
     <config>
         <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
@@ -50,13 +69,12 @@ def create(ip):
         </interfaces>
     </config>
     """
-
     try:
-        netconf_reply = netconf_edit_config(netconf_config)
+        netconf_reply = m.edit_config(target='running', config=netconf_config)
         xml_data = netconf_reply.xml
         print(xml_data)
         if '<ok/>' in xml_data:
-            return "Interface loopback 66070108 is created successfully using Netconf"
+            return "Interface loopback 66070108 is created successfully using NETCONF"
         else:
             return "Cannot create: Interface loopback 66070108"
     except Exception as e:
