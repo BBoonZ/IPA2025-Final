@@ -11,5 +11,14 @@ def showrun(router_ip):
     else:
         return "Error: Ansible"
 
+def motd(router_ip, student_id):
+    command = ['ansible-playbook', 'playbook-2025.yaml', '-i', 'hosts', '--extra-vars', f'router_ip={router_ip} student_id={student_id}']
+    result = subprocess.run(command, capture_output=True, text=True)
+
+    if result.returncode == 0:
+        return "ok"
+    else:
+        return f"Error: Ansible\n{result.stdout}\n{result.stderr}"
+
 if __name__ == "__main__":
     showrun()
