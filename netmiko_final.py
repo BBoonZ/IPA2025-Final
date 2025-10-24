@@ -1,14 +1,16 @@
 from netmiko import ConnectHandler
 from pprint import pprint
-import os
-from dotenv import load_dotenv
 
+router_ip = ""
+device_params = {}
 
-load_dotenv()
+def set_router_ip(ip):
+    global router_ip 
+    global device_params
 
-router_ip = os.getenv("ROUTER_IP")
+    router_ip = ip
 
-device_params = {
+    device_params = {
     "device_type": "cisco_ios",
     "ip": router_ip,
     "username": "admin",
@@ -16,7 +18,6 @@ device_params = {
     "conn_timeout": 20,
     "banner_timeout": 30
 }
-
 
 def gigabit_status():
     ans = ""

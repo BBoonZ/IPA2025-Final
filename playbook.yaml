@@ -1,11 +1,12 @@
 ---
 - name: AUTOMATIC BACKUP OF RUNNING-CONFIG
-  hosts: routers
+  hosts: all  # ใช้ all เพราะ Python script ส่ง host มา override
   gather_facts: false
   connection: network_cli
   vars:
     student_id: 66070108
     router_name: "{{ inventory_hostname }}"
+    router_ip: "{{ router_ip }}"
 
   tasks:
   - name: DISPLAYING THE RUNNING-CONFIG

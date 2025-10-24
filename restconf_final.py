@@ -6,11 +6,9 @@ requests.packages.urllib3.disable_warnings()
 
 load_dotenv()
 
-router_ip = os.getenv("ROUTER_IP", "10.0.15.61")
+router_ip = ""
 
-# Router IP Address is 10.0.15.61
 api_url = f"https://{router_ip}/restconf/data"
-
 
 # the RESTCONF HTTP headers, including the Accept and Content-Type
 # Two YANG data formats (JSON and XML) work with RESTCONF
@@ -20,6 +18,12 @@ headers = {
 }
 basicauth = ("admin", "cisco")
 
+def set_router_ip(ip):
+    global router_ip 
+    global api_url
+    
+    router_ip = ip
+    api_url = f"https://{router_ip}/restconf/data"
 
 def create():
     yangConfig = {
