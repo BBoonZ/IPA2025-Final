@@ -1,18 +1,9 @@
 from netmiko import ConnectHandler
 from pprint import pprint
-import textfsm
-from io import StringIO
 
 router_ip = ""
 student_id = ""
 device_params = {}
-
-banner_template = """
-Value Filldown BANNER (.+)
-
-Start
-  ^banner motd \^(?P<BANNER>.*)\^ -> Record
-"""
 
 def set_router_ip(ip, id):
     global router_ip 
@@ -58,14 +49,13 @@ def gigabit_status():
 def motd():
     with ConnectHandler(**device_params) as ssh:
         output = ssh.send_command("show running-config | include banner motd")
-        print("Raw output:", output)
+        print(output)
 
-        fsm = textfsm.TextFSM(StringIO(banner_template))
-        parsed = fsm.ParseText(output)
+        start = output.find("^C")
+        end = output.find("^C", start + 2)
 
-        if parsed:
-            # parsed จะเป็น list of list
-            motd_text = parsed[0][0].strip()
+        if start != -1 and end != -1:
+            motd_text = output[start + 2:end]
             print(f"MOTD on {router_ip}: {motd_text}")
             return motd_text
         else:
