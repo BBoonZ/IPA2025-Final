@@ -52,10 +52,10 @@ def motd():
         output = ssh.send_command("show running-config")
         # print(output)
 
-        match = re.search(r'banner motd (.)\n?(.*?)\n?\1', output, re.DOTALL)
-
+        match = re.search(r'banner motd \^(.*?)\^C', output, re.DOTALL)
+        print(match)
         if match:
-            motd_text = match.group(2).strip()
+            motd_text = match.group(1).strip()
             print(f"MOTD on {router_ip}: {motd_text}")
             return motd_text[1::]
         else:

@@ -114,7 +114,11 @@ while True:
 
             if command == "motd":
                 if message_len > 3:
-                    motd_message = " ".join(message[3:])
+                    message = "/66070108 10.0.0.15 motd i love roblox"
+                    parts_message = message.split()
+
+                    motd_message = " ".join(parts_message[3:])
+                    print(motd_message)
                     responseMessage = ansible_final.motd(router_ip, motd_message, "66070108")
                 else:
                     responseMessage = netmiko_final.motd()

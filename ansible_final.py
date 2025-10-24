@@ -16,6 +16,7 @@ def motd(router_ip, motd_message, student_id):
     result = subprocess.run(command, capture_output=True, text=True)
 
     if result.returncode == 0:
+        print(motd_message)
         return "Ok: success"
     else:
         return f"Error: Ansible"
