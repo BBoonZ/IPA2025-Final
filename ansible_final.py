@@ -7,7 +7,7 @@ def showrun(router_ip):
     result = subprocess.run(command, capture_output=True, text=True)
     result = result.stdout
     if 'ok=2' in result:
-        return "ok"
+        return "Ok: success"
     else:
         return "Error: Ansible"
 
@@ -16,7 +16,7 @@ def motd(router_ip, student_id):
     result = subprocess.run(command, capture_output=True, text=True)
 
     if result.returncode == 0:
-        return "ok"
+        return "Ok: success"
     else:
         return f"Error: Ansible\n{result.stdout}\n{result.stderr}"
 

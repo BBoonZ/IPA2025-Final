@@ -49,7 +49,8 @@ def gigabit_status():
 def motd():
     with ConnectHandler(**device_params) as ssh:
         output = ssh.send_command("show running-config | include banner motd")
-        
+        print(output)
+
         if output:
             print(f"MOTD on {router_ip}:")
             # กำหนดข้อความเฉพาะ student_id
@@ -58,3 +59,4 @@ def motd():
         else:
             print(f"No MOTD configured on {router_ip}")
             return "Error: No MOTD Configured"
+
