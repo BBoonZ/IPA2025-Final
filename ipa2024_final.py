@@ -114,8 +114,8 @@ while True:
 
             if command == "motd":
                 if message_len > 3:
-                    student_id = message.split(" ")[-1]
-                    responseMessage = ansible_final.motd(router_ip, student_id)
+                    motd_message = " ".join(message[3:])
+                    responseMessage = ansible_final.motd(router_ip, motd_message, "66070108")
                 else:
                     responseMessage = netmiko_final.motd()
             elif command == "gigabit_status":

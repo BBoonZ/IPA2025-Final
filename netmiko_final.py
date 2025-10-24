@@ -1,5 +1,6 @@
 from netmiko import ConnectHandler
 from pprint import pprint
+import re
 
 router_ip = ""
 student_id = ""
@@ -48,14 +49,15 @@ def gigabit_status():
 
 def motd():
     with ConnectHandler(**device_params) as ssh:
-        output = ssh.send_command("show running-config | include banner motd")
-        print(output)
+        output = ssh.send_command("show running-config")
+        # print(output)
 
-        if output:
-            print(f"MOTD on {router_ip}:")
-            # กำหนดข้อความเฉพาะ student_id
-            print(f"Authorized users only! Managed by {student_id}")
-            return f"Authorized users only! Managed by {student_id}"
+        match = re.search(r'banner motd (.)\n?(.*?)\n?\1', output, re.DOTALL)
+
+        if match:
+            motd_text = match.group(2).strip()
+            print(f"MOTD on {router_ip}: {motd_text}")
+            return motd_text[1::]
         else:
             print(f"No MOTD configured on {router_ip}")
             return "Error: No MOTD Configured"
