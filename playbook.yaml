@@ -7,8 +7,13 @@
     student_id: 66070108
     router_name: "{{ inventory_hostname }}"
     router_ip: "{{ router_ip }}"
+    ansible_host: "{{ router_ip }}"
 
   tasks:
+  - name: Show which router IP we are connecting to
+    debug:
+      msg: "Connecting to router {{ ansible_host }} (from router_ip={{ router_ip }})"
+
   - name: DISPLAYING THE RUNNING-CONFIG
     ios_command:
       commands:

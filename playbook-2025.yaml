@@ -5,9 +5,14 @@
   connection: network_cli
   vars:
     student_id: "{{ student_id }}"
-    router_ip: "{{ router_ip }}"
+    ansible_host: "{{ router_ip }}"
     motd_message: "Authorized users only! Managed by {{ student_id }}"
   tasks:
+    - name: Show which router IP we are connecting to
+      debug:
+        msg: "Connecting to router {{ ansible_host }} (from router_ip={{ router_ip }})"
+
+
     - name: Configure MOTD banner
       ios_config:
         lines:

@@ -2,13 +2,16 @@ from netmiko import ConnectHandler
 from pprint import pprint
 
 router_ip = ""
+student_id = ""
 device_params = {}
 
-def set_router_ip(ip):
+def set_router_ip(ip, id):
     global router_ip 
+    global student_id 
     global device_params
 
     router_ip = ip
+    student_id = id
 
     device_params = {
     "device_type": "cisco_ios",
@@ -42,3 +45,16 @@ def gigabit_status():
 
         pprint(ans)
         return ans
+
+def motd():
+    with ConnectHandler(**device_params) as ssh:
+        output = ssh.send_command("show running-config | include banner motd")
+        
+        if output:
+            print(f"MOTD on {router_ip}:")
+            # กำหนดข้อความเฉพาะ student_id
+            print(f"Authorized users only! Managed by {student_id}")
+            return f"Authorized users only! Managed by {student_id}"
+        else:
+            print(f"No MOTD configured on {router_ip}")
+            return "Error: No MOTD Configured"
