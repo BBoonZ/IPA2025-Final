@@ -28,6 +28,8 @@ ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 # Defines a variable that will hold the roomId
 roomIdToGetMessages = os.getenv("WEBEX_ROOM_ID")
 
+api = ""
+
 while True:
     # always add 1 second of delay to the loop to not go over a rate limit of API calls
     time.sleep(1)
@@ -74,26 +76,31 @@ while True:
     # check if the text of the message starts with the magic character "/" followed by your studentID and a space and followed by a command name
     #  e.g.  "/66070123 create"
     # /66070123 10.0.15.61 create
-    api = None
+
+    command = ""
 
     if message.startswith("/66070108 "):
-
-        # extract the command
-        message_len = len(message.split(" "))
+        parts = message.split(" ")
+        message_len = len(parts)
 
         if message_len >= 3:
-            router_ip, command = messages.split(" ")[1].lower(), messages.split(" ")[2].lower()
-            print(router_ip, command)
-        elif message_len == 2 & (messages.split(" ")[1].lower() == "restconf" or  messages.split(" ")[1].lower() == "netconf"):
-            api = messages.split(" ")[1].lower()
-            responseMessage = f"Ok: {messages.split(' ')}"
-        elif message_len == 2 & messages.startswith("/66070108 10.0.15"):
-            responseMessage = "Error: No command found."
-        else:
-            if api is None:
-                responseMessage = "Error: No method specified"
-            else:
-                responseMessage = "Error: No IP specified"
+            router_ip = parts[1].lower()
+            command = parts[2].lower()
+            responseMessage = f"Ok: Router={router_ip}, Command={command}"
+
+        elif message_len == 2:
+            arg = parts[1].lower()
+            if arg in ["restconf", "netconf"]:
+                api = arg
+                responseMessage = f"Ok: {arg.title()}"
+                print(arg, "ok test api is defined")
+            elif arg.startswith("10.0.15"):
+                responseMessage = "Error: No command found."
+            elif arg.startswith(("create", "delete", "status", "enable", "disable", "gigabit_status", "showrun")):
+                if api:
+                    responseMessage = "Error: No IP specified"
+                else:
+                    responseMessage = "Error: No method specified"
 
 
 # 5. Complete the logic for each command
