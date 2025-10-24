@@ -86,30 +86,34 @@ while True:
             print(router_ip, command)
         elif message_len == 2 & (messages.split(" ")[1].lower() == "restconf" or  messages.split(" ")[1].lower() == "netconf"):
             api = messages.split(" ")[1].lower()
-            responseMessage == f"Ok: {messages.split(' ')}"
-        elif message_len == 2 
+            responseMessage = f"Ok: {messages.split(' ')}"
         elif message_len == 2 & messages.startswith("/66070108 10.0.15"):
-            responseMessage == "Error: No command found."
+            responseMessage = "Error: No command found."
+        else:
+            if api is None:
+                responseMessage = "Error: No method specified"
+            else:
+                responseMessage = "Error: No IP specified"
 
 
 # 5. Complete the logic for each command
 
-        if command == "create":
-            responseMessage = restconf_final.create()
-        elif command == "delete":
-            responseMessage = restconf_final.delete()
-        elif command == "enable":
-            responseMessage = restconf_final.enable()
-        elif command == "disable":
-            responseMessage = restconf_final.disable()
-        elif command == "status":
-            responseMessage = restconf_final.status()
-        elif command == "gigabit_status":
-            responseMessage = netmiko_final.gigabit_status()
-        elif command == "showrun":
-            responseMessage = ansible_final.showrun()
-        else:
-            responseMessage = "Error: No command or unknown command"
+        # if command == "create":
+        #     responseMessage = restconf_final.create()
+        # elif command == "delete":
+        #     responseMessage = restconf_final.delete()
+        # elif command == "enable":
+        #     responseMessage = restconf_final.enable()
+        # elif command == "disable":
+        #     responseMessage = restconf_final.disable()
+        # elif command == "status":
+        #     responseMessage = restconf_final.status()
+        # elif command == "gigabit_status":
+        #     responseMessage = netmiko_final.gigabit_status()
+        # elif command == "showrun":
+        #     responseMessage = ansible_final.showrun()
+        # else:
+        #     responseMessage = "Error: No command or unknown command"
 
 # 6. Complete the code to post the message to the Webex Teams room.
 
