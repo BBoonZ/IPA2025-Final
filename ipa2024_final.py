@@ -12,6 +12,7 @@ import json
 import os
 import time
 import restconf_final
+import netconf_final
 import netmiko_final
 import ansible_final
 
@@ -77,8 +78,6 @@ while True:
     #  e.g.  "/66070123 create"
     # /66070123 10.0.15.61 create
 
-    command = ""
-
     if message.startswith("/66070108 "):
         parts = message.split(" ")
         message_len = len(parts)
@@ -104,23 +103,40 @@ while True:
 
 
 # 5. Complete the logic for each command
-
-        # if command == "create":
-        #     responseMessage = restconf_final.create()
-        # elif command == "delete":
-        #     responseMessage = restconf_final.delete()
-        # elif command == "enable":
-        #     responseMessage = restconf_final.enable()
-        # elif command == "disable":
-        #     responseMessage = restconf_final.disable()
-        # elif command == "status":
-        #     responseMessage = restconf_final.status()
-        # elif command == "gigabit_status":
-        #     responseMessage = netmiko_final.gigabit_status()
-        # elif command == "showrun":
-        #     responseMessage = ansible_final.showrun()
-        # else:
-        #     responseMessage = "Error: No command or unknown command"
+        if message_len >= 3 and api == "restconf":
+            if command == "create":
+                responseMessage = restconf_final.create(router_ip)
+            elif command == "delete":
+                responseMessage = restconf_final.delete(router_ip)
+            elif command == "enable":
+                responseMessage = restconf_final.enable(router_ip)
+            elif command == "disable":
+                responseMessage = restconf_final.disable(router_ip)
+            elif command == "status":
+                responseMessage = restconf_final.status(router_ip)
+            elif command == "gigabit_status":
+                responseMessage = netmiko_final.gigabit_status(router_ip)
+            elif command == "showrun":
+                responseMessage = ansible_final.showrun(router_ip)
+            else:
+                responseMessage = "Error: No command or unknown command"
+        elif message_len >= 3 and api == "netconf":
+            if command == "create":
+                responseMessage = netconf_final.create(router_ip)
+            elif command == "delete":
+                responseMessage = netconf_final.delete(router_ip)
+            elif command == "enable":
+                responseMessage = netconf_final.enable(router_ip)
+            elif command == "disable":
+                responseMessage = netconf_final.disable(router_ip)
+            elif command == "status":
+                responseMessage = netconf_final.status(router_ip)
+            elif command == "gigabit_status":
+                responseMessage = netmiko_final.gigabit_status(router_ip)
+            elif command == "showrun":
+                responseMessage = ansible_final.showrun(router_ip)
+            else:
+                responseMessage = "Error: No command or unknown command"
 
 # 6. Complete the code to post the message to the Webex Teams room.
 
