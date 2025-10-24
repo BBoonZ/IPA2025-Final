@@ -12,7 +12,7 @@ import json
 import os
 import time
 import restconf_final
-# import netconf_final
+import netconf_final
 import netmiko_final
 import ansible_final
 
@@ -29,7 +29,7 @@ ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 # Defines a variable that will hold the roomId
 roomIdToGetMessages = os.getenv("WEBEX_ROOM_ID")
 
-api = "restconf"
+api = ""
 
 while True:
     # always add 1 second of delay to the loop to not go over a rate limit of API calls
@@ -78,13 +78,14 @@ while True:
     #  e.g.  "/66070123 create"
     # /66070123 10.0.15.61 create
     command = ""
+    responseMessage = ""
 
 
     if message.startswith("/66070108 "):
         parts = message.split(" ")
         message_len = len(parts)
 
-        if message_len >= 3:
+        if message_len >= 3 and api:
             router_ip = parts[1].lower()
             command = parts[2].lower()
             print(f"Ok: Router={router_ip}, Command={command}")
@@ -102,6 +103,8 @@ while True:
                     responseMessage = "Error: No IP specified"
                 else:
                     responseMessage = "Error: No method specified"
+        else:
+            responseMessage = "Error: No method specified"
 
 
 # 5. Complete the logic for each command
@@ -125,25 +128,25 @@ while True:
                 responseMessage = ansible_final.showrun(router_ip)
             else:
                 responseMessage = "Error: No command or unknown command"
-        # elif message_len >= 3 and api == "netconf":
-            
+        elif message_len >= 3 and api == "netconf":
+            netmiko_final.set_router_ip(router_ip)
 
-        #     if command == "create":
-        #         responseMessage = netconf_final.create()
-        #     elif command == "delete":
-        #         responseMessage = netconf_final.delete()
-        #     elif command == "enable":
-        #         responseMessage = netconf_final.enable()
-        #     elif command == "disable":
-        #         responseMessage = netconf_final.disable()
-        #     elif command == "status":
-        #         responseMessage = netconf_final.status()
-        #     elif command == "gigabit_status":
-        #         responseMessage = netmiko_final.gigabit_status()
-        #     elif command == "showrun":
-        #         responseMessage = ansible_final.showrun()
-        #     else:
-        #         responseMessage = "Error: No command or unknown command"
+            if command == "create":
+                responseMessage = netconf_final.create(router_ip)
+            elif command == "delete":
+                responseMessage = netconf_final.delete(router_ip)
+            elif command == "enable":
+                responseMessage = netconf_final.enable(router_ip)
+            elif command == "disable":
+                responseMessage = netconf_final.disable(router_ip)
+            elif command == "status":
+                responseMessage = netconf_final.status(router_ip)
+            elif command == "gigabit_status":
+                responseMessage = netmiko_final.gigabit_status()
+            elif command == "showrun":
+                responseMessage = ansible_final.showrun(router_ip)
+            else:
+                responseMessage = "Error: No command or unknown command"
 
 # 6. Complete the code to post the message to the Webex Teams room.
 
@@ -158,6 +161,8 @@ while True:
         # Need to attach file if responseMessage is 'ok';
         # Read Send a Message with Attachments Local File Attachments
         # https://developer.webex.com/docs/basics for more detail
+
+        print(responseMessage)
 
         if command == "showrun" and responseMessage == 'ok':
             filename = "./backups/show_run_66070108_CSR1kv.txt"
